@@ -89,6 +89,7 @@ vector<string> split(string s, string delimiter)
 		out.push_back(token);
 		s.erase(0, pos + delimiter.length());
 	}
+	out.push_back(s);
 	return out;
 }
 
@@ -102,38 +103,55 @@ int str2int(const string &str)
 	}
 	return num;
 }
-int main()
+void ArrayTest()
 {
-	string path = "Hallo TXTX";
-	writeFile(path, "Hallo Welt\nHallo");
-	print(readFile(path));
-	vector<string> Tarray;
-	for (int index = 0; index < 10; index++)
+
+	vector<string> arr;
+	print("\n");
+
+	for (int i = 0; i < 5; i++)
 	{
-		Tarray.push_back("Hallo Welt\n");
-	}
-	for (auto &item : Tarray)
-	{
-		item.append("GA");
-	}
-	for (auto &_item : Tarray)
-	{
-		print(_item);
+
+		arr.push_back("Hello World " + to_string(i + 4));
 	}
 
-	system("pause");
-	vector<string> items = split("1 2 3 4", " ");
-	for (auto &item : items)
+	for (auto &it : arr)
 	{
-		print(item + "\n");
+
+		it.append("\n");
 	}
+
+	print(join(arr, ""));
+
 	print("\n");
-	print(join(items, " "));
-	system("pause");
-	return 0;
+
+	vector<string> words = split("@-script is cool", " ");
+	for (auto &it : words)
+	{
+		print(it + "\t");
+	}
+
+	print("\n");
+}
+#define HelloWorl "Hello World 2\n"
+
+string hw()
+{
+	system("title test");
+	return "Hello World 1\n";
 }
 
-string nx(int x, string y)
+void start(int startNum)
 {
-	
+
+	print(hw());
+	print(HelloWorl);
+	ArrayTest();
+}
+
+int main()
+{
+	start(10);
+	system("pause");
+	return 0;
 }

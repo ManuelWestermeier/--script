@@ -1,0 +1,13 @@
+@static HelloWorl "Hello World 2\n"
+
+string hw() {
+	system("title test");
+    @back "Hello World 1\n"
+}
+
+@fn start#void : int startNum {
+    //print hello world
+    print(hw());
+    print(HelloWorl);
+    ArrayTest();
+}

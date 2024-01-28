@@ -43,9 +43,9 @@ function parseCode(data = "") {
             //parse the word in the line
             const lineParts = line.split(" ");
             //parse the import string
-            const _import = lineParts.slice(1, lineParts.length - 1).join("");
+            const _import = lineParts.slice(1, lineParts.length).join("");
             //return the statement
-            return `#include <${_import}>;`
+            return `#include <${_import}>`
         }
         //check if the line includes a function statement
         else if (func == "@fn") {
@@ -61,14 +61,18 @@ function parseCode(data = "") {
             return `${type} ${name}(${(args ?? "").split("{").join("")}) {`;
         }//check if the line includes a function statement
         else if (func == "@back") {
-            return `return ${param1};`;
+            //parse the words in the line
+            const lineParts = line.split(" ");
+            //parse the return string
+            const returnVal = lineParts.slice(1, lineParts.length).join(" ");
+            return `return ${returnVal};`;
         }
         //parse the global static
         else if (func == "@static") {
             //parse the line
             const lineParts = line.split(" ")
             //set the import string
-            return `#define ${param1} ${lineParts.slice(3, lineParts.length).join(" ")};`
+            return `#define ${param1} ${lineParts.slice(2, lineParts.length).join(" ")}`
         }
         //for loop statement
         else if (func == "@loop") {

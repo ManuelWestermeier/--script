@@ -1,29 +1,8 @@
+@add src/array.@
+@add src/start.@
+
 @fn main#int {
-    string path = "Hallo TXTX";
-    writeFile(path,"Hallo Welt\nHallo");
-    print(readFile(path));
-    @array Tarray : string
-    @loop 10 {
-        Tarray.push_back("Hallo Welt\n");
-    }
-    @for_each item in Tarray {
-        item.append("GA");
-    }
-    @for_each _item in Tarray {
-        print(_item);
-    }
-    //HAllo Welt
-    system("pause");
-    vector<string> items = split("1 2 3 4"," ");
-    @for_each item in items {
-        print(item + "\n");
-    }
-    print("\n");
-    print(join(items," "));
+    start(10);
     system("pause");
     @back 0
-}
-
-@fn nx#string : int x, string y {
-    //do stuff
 }

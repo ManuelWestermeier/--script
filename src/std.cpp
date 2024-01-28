@@ -89,6 +89,7 @@ vector<string> split(string s, string delimiter)
 		out.push_back(token);
 		s.erase(0, pos + delimiter.length());
 	}
+	out.push_back(s);
 	return out;
 }
 

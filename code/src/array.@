@@ -1,0 +1,32 @@
+@fn ArrayTest#void {
+    
+    //create array
+    @array arr : string
+    print("\n");
+    //loop 5 times
+    @loop 5 i {
+        //the variable i stands for the index (or round)
+        //you can remove it if you dont need
+        arr.push_back("Hello World " + to_string(i + 4));
+    }
+    
+    //loop for each item in array
+    @for_each it in arr {
+        //add to every item a new line
+        it.append("\n");
+    }
+
+    //output the array
+    print(join(arr,""));
+    
+    print("\n");
+    
+    //split an string
+    vector<string> words = split("@-script is cool"," ");
+    @for_each it : words {
+        print(it + "\t");
+    }
+
+    print("\n");
+
+}

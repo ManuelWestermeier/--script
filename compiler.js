@@ -8,9 +8,9 @@ const outputfilePath = "out/index.cpp"
 const data = fs.readFileSync(inputfilePath, "utf-8").split("\r").join("")//.split("\t").join(" ")
 const std = fs.readFileSync("src/std.cpp", "utf-8")
 
-fs.writeFileSync(outputfilePath, std + parseCode(data), "utf-8")
+fs.writeFileSync(outputfilePath, std + parseCode(data, inputfilePath), "utf-8")
 
-function parseCode(data = "") {
+function parseCode(data = "", pathName = "") {
     //get the lines
     const lines = data.split("\n")
     //parse the code
@@ -32,11 +32,13 @@ function parseCode(data = "") {
         var [func, param1, param2, param3] = line.split(" ")
         //identify the function
         if (func == "@add") {
-            //add and parse file
-            return parseCode(fs.readFileSync(path.join(
-                path.dirname(inputfilePath),
+            //create the path
+            const _path = path.join(
+                path.dirname(pathName),
                 param1
-            ), "utf-8"))
+            ).replace("\r", "")
+            //add and parse file
+            return parseCode(fs.readFileSync(_path, "utf-8"), _path)
         }
         //parse the imports
         else if (func == "@imp") {

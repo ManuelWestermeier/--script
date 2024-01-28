@@ -4,7 +4,7 @@
 
 ## the main function is the startpoint of every programm
 
-````txt
+````
 @fn main#int {
 
     //return 0 (0 is sucsecc 1 is an error (only work in the main function)) 
@@ -15,7 +15,7 @@
 
 ## basic function statement : 
 
-````txt
+````
 @fn {function-name}#{return-type} : {{type} {value-name}}, {{type} {value-name}} {
 
     //exmale params : int i,string s,char c,float f 
@@ -27,13 +27,13 @@
 
 ## return statement
 
-```txt
+```
 @back {value to return}
 ```
 
 ## import cpp form local file :
 
-```txt
+```
 @add {file-path} 
 ```
 

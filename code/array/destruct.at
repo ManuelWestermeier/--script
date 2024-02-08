@@ -1,2 +1,5 @@
+//destruct 2 first items in array
+//array-name # array type : variable names splitted with a space
 @destr text # string : first secound
+//print them
 print("\ndestruct : " + first + " and " + secound + "\n");

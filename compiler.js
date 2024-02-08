@@ -55,7 +55,7 @@ function parseFile(pathname = "") {
             else if (fn == "@foreach") {
                 out += `for (auto ${parsedParts[1]} : ${parsedParts[3]}) {`
             }
-            //loop for each
+            //destructure arrays
             else if (fn == "@destr") {
                 for (let index = 0; index < parsedParts.length - 5; index++) {
                     out += `${parsedParts[3]} ${parsedParts[index + 5]} = ${parsedParts[1]}.at(${index});\n`
@@ -74,6 +74,14 @@ function parseFile(pathname = "") {
                 const [name, type] = parsedParts[1].split("#")
                 out += `${type || "void"} ${name} ${parsedParts.slice(2, parsedParts.length).join(" ")}`
             }
+            //create template strings
+            else if (fn == "@templ") {
+                const impPath = path.join(dir, parsedParts[3].replace("\r", ""));
+                if (impPath == pathname) return;
+                if (!fs.existsSync(impPath)) throw new Error("path not exists");
+                const template = createTemplate(impPath, parsedParts.splice(5, parsedParts.length - 1), parsedParts);
+                out += template;
+            }
             //return default
             else {
                 log(fn)
@@ -84,4 +92,21 @@ function parseFile(pathname = "") {
         return out
     }).join("\n")
 
+}
+
+function createTemplate(pathname, params = [], parsedParts) {
+    const data = fs.readFileSync(pathname, "utf-8");
+    var isVar = false;
+    var template = `string ${parsedParts[1]};\n`;
+    data.split("#").map((part, i) => {
+        if (isVar) {
+            template += `${parsedParts[1]} += ${params[parseInt(part)] ?? '""'};\n`
+        }
+        else {
+            const noLines = part.split('"').join('\\"').split("\n").join('\\n').split("\r").join('\\r')
+            template += `${parsedParts[1]} += "${noLines}";\n`
+        }
+        isVar = !isVar;
+    })
+    return template;
 }

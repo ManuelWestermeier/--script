@@ -28,4 +28,15 @@
     @imp map/create.at
     //get set and delete
     @imp map/set_get_delete.at
+    //---filesystem---
+    @imp fs.at
+
+    string p_x = "Hallo Welt";
+    string p_y = "Welt 2";
+
+    @templ txt from string-tamplate.html : p_x p_y
+
+    print(txt);
+
+    system("pause");
 }

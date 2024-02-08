@@ -21,17 +21,15 @@ void writeFile(string fileName, string data)
 
 string readFile(string fileName)
 {
-	ifstream file;
-	string data;
-	file.open(fileName.c_str());
-	while (!file.eof())
+	ifstream f(fileName);
+	string str;
+	if (f)
 	{
-		string chunk;
-		file >> chunk;
-		data += chunk;
+		ostringstream ss;
+		ss << f.rdbuf();
+		str = ss.str();
 	}
-	file.close();
-	return data;
+	return str;
 }
 
 string print(string out)
@@ -111,4 +109,4 @@ string sf(int d)
 	return to_string(d);
 }
 
-//start
+// start

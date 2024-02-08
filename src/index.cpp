@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <map>
+#include <random>
 
 using namespace std;
 
@@ -104,24 +106,9 @@ int str2int(const string &str)
 	return num;
 }
 
-int main()
+string sf(int d)
 {
-	// hallo Welt
-	vector<string> text;
-	text = split("Hallo Welt Was ghet?", " ");
-	for (auto &it : text)
-	{
-		print(it + "\n");
-	}
-	// hall end
-	print("test");
-	vector<string> testarray;
-	string x = "Hallo Welt";
-	string xxx = "x@x";
+	return to_string(d);
 }
 
-string x()
-{
-	print("Hallo Welt");
-	return "Halllo Welt";
-}
+//start

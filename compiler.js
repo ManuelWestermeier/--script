@@ -2,99 +2,86 @@ const { log } = require("console")
 const fs = require("fs")
 const path = require("path")
 
-const inputfilePath = "code/index.@"
-const outputfilePath = "out/index.cpp"
+const inpPath = "code/index.at"
+const outPath = "C:\\Users\\Manuel Westermeier\\source\\repos\\cpp-server-script\\cpp-server-script.cpp"
 
-const data = fs.readFileSync(inputfilePath, "utf-8").split("\r").join("")//.split("\t").join(" ")
-const std = fs.readFileSync("src/std.cpp", "utf-8")
+//start compiling
+fs.writeFileSync(outPath,
+    fs.readFileSync("src/index.cpp", "utf-8") + parseFile(inpPath)
+    , "utf-8")
 
-fs.writeFileSync(outputfilePath, std + parseCode(data, inputfilePath), "utf-8")
+function parseFile(pathname = "") {
 
-function parseCode(data = "", pathName = "") {
-    //get the lines
-    const lines = data.split("\n")
-    //parse the code
-    const code = lines.map(line => {
-        //delete the outcomment part
-        if (line.includes("//"))
-            line = line.split("//")[0];
-        //check if the line don is special code
-        if (!line.includes("@")) return line
+    const dir = path.dirname(pathname)
 
-        //replace the no syntax tokens
-        var line = line.split("@").map((part, i) => {
-            if (i == 0)
-                return part.split(" ").join("").split("\t").join("")
-            else return part;
-        }).join("@")
-
-        //parse the line
-        var [func, param1, param2, param3] = line.split(" ")
-        //identify the function
-        if (func == "@add") {
-            //create the path
-            const _path = path.join(
-                path.dirname(pathName),
-                param1
-            ).replace("\r", "")
-            //add and parse file
-            return parseCode(fs.readFileSync(_path, "utf-8"), _path)
-        }
-        //parse the imports
-        else if (func == "@imp") {
-            //parse the word in the line
-            const lineParts = line.split(" ");
-            //parse the import string
-            const _import = lineParts.slice(1, lineParts.length).join("");
-            //return the statement
-            return `#include <${_import}>`
-        }
-        //check if the line includes a function statement
-        else if (func == "@fn") {
-            //line parts
-            var lineParts = line.split(" ")
-            //parts without func
-            const parts = lineParts.slice(1, lineParts.length - 1).join(" ")
-            //parse the base and the arguments
-            const [base, args] = parts.split(":")
-            //parse the functionName and the type
-            const [name, type] = base.split("#")
-            //set the function line
-            return `${type} ${name}(${(args ?? "").split("{").join("")}) {`;
-        }//check if the line includes a function statement
-        else if (func == "@back") {
-            //parse the words in the line
-            const lineParts = line.split(" ");
-            //parse the return string
-            const returnVal = lineParts.slice(1, lineParts.length).join(" ");
-            return `return ${returnVal};`;
-        }
-        //parse the global static
-        else if (func == "@static") {
-            //parse the line
-            const lineParts = line.split(" ")
-            //set the import string
-            return `#define ${param1} ${lineParts.slice(2, lineParts.length).join(" ")}`
-        }
-        //for loop statement
-        else if (func == "@loop") {
-            //index name
-            var indexName = param2 == "{" ? "index" : param2
-            //set the statement
-            return `for (int ${indexName} = 0; ${indexName} < ${param1}; ${indexName}++) {`;
-        }
-        //create array statement
-        else if (func == "@array") {
-            return `vector<${param3}> ${param1};`
-        }
-        //create array statement
-        else if (func == "@for_each") {
-            return `for (auto &${param1} : ${param3}) {`
-        }
-
-        else return line
-
+    return fs.readFileSync(pathname, "utf-8").split("\n").map(line => {
+        //check if the nostrinp part includes @
+        if (!line.split("\"").filter((p, i) => i % 2 == 0).join(" ").includes("@")) return line
+        //create the out string
+        var out = ""
+        //parse the paths
+        const parts = line.split("\"").map((part, i) => {
+            const isStr = (2 % i == 0)
+            return { part, isStr }
+        })
+        //parse the output
+        parts.forEach(({ isStr, part }) => {
+            //add the string
+            if (isStr) {
+                out += `"${part}"`
+                return
+            }
+            //path parts
+            const parsedParts = part.split("  ").join(" ").split("\t").join(" ").split("\r").join("").split(" ").filter(p => p != "");
+            const [fn] = parsedParts;
+            //start the logic
+            //on init
+            if (fn == "@init") {
+                out += "int main() {"
+            }
+            //import form file
+            else if (fn == "@imp") {
+                //get the path
+                const impPath = path.join(dir, parsedParts[1].replace("\r", ""));
+                if (impPath == pathname) return;
+                if (fs.existsSync(impPath))
+                    out += parseFile(impPath);
+            }
+            //create array
+            else if (fn == "@array") {
+                out += `vector<${parsedParts[3]}> ${parsedParts[1]};`
+            }
+            //loop for each
+            else if (fn == "@foreach") {
+                out += `for (auto ${parsedParts[1]} : ${parsedParts[3]}) {`
+            }
+            //loop for each
+            else if (fn == "@destr") {
+                for (let index = 0; index < parsedParts.length - 5; index++) {
+                    out += `${parsedParts[3]} ${parsedParts[index + 5]} = ${parsedParts[1]}.at(${index});\n`
+                }
+            }
+            //create a dictionary
+            else if (fn == "@map") {
+                out += `map<${parsedParts[3] ?? "string"}, ${parsedParts[5] ?? "string"}> ${parsedParts[1]};`
+            }
+            //loop for int
+            else if (fn == "@loop") {
+                out += `for (int ${parsedParts[3] || "index"} = 0; ${parsedParts[3] || "index"} < ${parsedParts[1]}; ${parsedParts[3] || "index"}++) {`
+            }
+            //create function
+            else if (fn == "@fn") {
+                const [name, type] = parsedParts[1].split("#")
+                out += `${type || "void"} ${name} ${parsedParts.slice(2, parsedParts.length).join(" ")}`
+            }
+            //return default
+            else {
+                log(fn)
+                out += parsedParts.join(" ");
+            }
+        })
+        //
+        return out
     }).join("\n")
 
-    return code;
 }

@@ -1,0 +1,31 @@
+@fn returnSomeString#string () {
+    return "\nSome String\n\n";
+}
+
+@fn doSomethingx(int i) {
+    print("Hallo Welt " + sf(i));
+    print(returnSomeString());
+}
+
+@init {
+    //call a function
+    doSomethingx(10);
+    //---arrays---
+    //test array create
+    @imp array/create.at
+    //split a string
+    @imp array/split.at
+    //loop foreach
+    @imp array/foreach.at
+    //join array
+    @imp array/join.at
+    //destruct array
+    @imp array/destruct.at
+    //loop
+    @imp loop.at
+    //---maps---
+    //create
+    @imp map/create.at
+    //get set and delete
+    @imp map/set_get_delete.at
+}

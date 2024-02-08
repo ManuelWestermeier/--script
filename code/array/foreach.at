@@ -1,0 +1,3 @@
+@foreach &word : text {
+    print(word + ",");
+}

@@ -1,0 +1,2 @@
+@destr text # string : first secound
+print("\ndestruct : " + first + " and " + secound + "\n");

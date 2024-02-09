@@ -1,0 +1,12 @@
+//define the in the string requested variables
+string header = "Hello";
+string textBody = "Hello World 1234252677 <h1>x</h1>";
+string HTML = "<b>Hallo Welt</b>";
+
+//variable-name from file-name
+@templ txt from string-tamplate-example.html
+
+//output the string
+writeFile("in.html", txt);
+system("start in.html");
+print(txt);

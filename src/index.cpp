@@ -32,9 +32,15 @@ string readFile(string fileName)
 	return str;
 }
 
+string log(string out)
+{
+	cout << out << endl;
+	return out;
+}
+
 string print(string out)
 {
-	cout << out;
+	cout << out << endl;
 	return out;
 }
 
@@ -61,6 +67,11 @@ string replace(string original, char find, string replacer)
 	}
 
 	return new_str;
+}
+
+string securifyHTML(string html)
+{
+	return replace(html, '<', "< ");
 }
 
 string join(vector<string> &_array, string split)

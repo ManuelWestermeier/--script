@@ -47,6 +47,13 @@ function parseFile(pathname = "") {
                 if (fs.existsSync(impPath))
                     out += parseFile(impPath);
             }
+            //add dependencies
+            else if (fn == "@add") {
+                var dependencies = parsedParts[1].toLowerCase()
+                if (dependencies == "http") {
+                    out += `\n${fs.readFileSync("src/cpp-httplib/httplib.h")}\n`;
+                }
+            }
             //create array
             else if (fn == "@array") {
                 out += `vector<${parsedParts[3]}> ${parsedParts[1]};`
@@ -79,12 +86,19 @@ function parseFile(pathname = "") {
                 const impPath = path.join(dir, parsedParts[3].replace("\r", ""));
                 if (impPath == pathname) return;
                 if (!fs.existsSync(impPath)) throw new Error("path not exists");
-                const template = createTemplate(impPath, parsedParts.splice(5, parsedParts.length - 1), parsedParts);
+                const template = createTemplate(impPath, parsedParts);
                 out += template;
+            }
+            //class-public
+            else if (fn == "@public") {
+                out += "public:"
+            }
+            //class-private
+            else if (fn == "@private") {
+                out += "private:"
             }
             //return default
             else {
-                log(fn)
                 out += parsedParts.join(" ");
             }
         })
@@ -94,16 +108,16 @@ function parseFile(pathname = "") {
 
 }
 
-function createTemplate(pathname, params = [], parsedParts) {
+function createTemplate(pathname, parsedParts) {
     const data = fs.readFileSync(pathname, "utf-8");
     var isVar = false;
-    var template = `string ${parsedParts[1]};\n`;
-    data.split("#").map((part, i) => {
+    var template = `string   ${parsedParts[1]};\n`;
+    data.split("##").map((part, i) => {
         if (isVar) {
-            template += `${parsedParts[1]} += ${params[parseInt(part)] ?? '""'};\n`
+            template += `${parsedParts[1]} += ${part == "hash" ? '"#"' : part};\n`
         }
         else {
-            const noLines = part.split('"').join('\\"').split("\n").join('\\n').split("\r").join('\\r')
+            const noLines = part.split('"').join('\\"').split("\n").join('\\n').split("\r").join('')
             template += `${parsedParts[1]} += "${noLines}";\n`
         }
         isVar = !isVar;

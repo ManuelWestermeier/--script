@@ -1,0 +1,27 @@
+using namespace httplib;
+//https://github.com/yhirose/cpp-httplib
+
+//create the server
+Server svr;
+//on get the root
+svr.Get("/", [](const Request& req, Response& res) {
+    requestIndex++;
+    @templ homePage from tmpl/index.html
+    res.set_content(homePage, "text/html");
+});
+//on post
+svr.Post("/", [](const Request& req, Response& res) {
+    lastPost = req.body;
+    res.set_content("<script>location = \"\"</script>", "text/html");
+});
+//404
+svr.set_error_handler([](const auto& req, auto& res) {
+  auto fmt = "<p>Error Status: <span style='color:red;'>%d</span></p>";
+  char buf[BUFSIZ];
+  snprintf(buf, sizeof(buf), fmt, res.status);
+  res.set_content(buf, "text/html");
+});
+//listen
+svr.listen("localhost", 80);
+//open
+system("start http://localhost");

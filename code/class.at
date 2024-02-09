@@ -1,0 +1,11 @@
+class testClass {
+    @private
+        int count = 0;
+    @public
+        @fn l() {
+            log("count : " + sf(count));
+        }
+        @fn add(int i) {
+            count += i;
+        }
+};

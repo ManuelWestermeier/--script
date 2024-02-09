@@ -1,3 +1,8 @@
+@add http
+
+int requestIndex = 0;
+string lastPost = "Hello World";
+
 @fn returnSomeString#string () {
     return "\nSome String\n\n";
 }
@@ -30,13 +35,13 @@
     @imp map/set_get_delete.at
     //---filesystem---
     @imp fs.at
-
-    string p_x = "Hallo Welt";
-    string p_y = "Welt 2";
-
-    @templ txt from string-tamplate.html : p_x p_y
-
-    print(txt);
-
+    //---string tamplate----
+    @imp templates/create.at
+    //---create-http-server---
+    @imp server/index.at
+    //pause the system
     system("pause");
 }
+
+//---class---
+@imp class.at

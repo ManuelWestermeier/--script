@@ -4,10 +4,11 @@ const path = require("path")
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
+const cppCompilerPath = "C:/msys64/ucrt64/bin/g++.exe"
 const inpPath = "code/index.at"
 const outPath = "C:\\Users\\Manuel Westermeier\\source\\repos\\cpp-server-script\\cpp-server-script.cpp"
 //const outPath = "out/index.cpp"
-//const onProgrammCompiledCode = ``;
+const onProgrammCompiledCode = ``;
 
 compile()
 //start compiling
@@ -15,10 +16,11 @@ function compile() {
     fs.writeFileSync(outPath,
         fs.readFileSync("src/index.cpp", "utf-8") + parseFile(inpPath)
         , "utf-8")
-    //exec(onProgrammCompiledCode).then(data => log(data));
+    //exec(onProgrammCompiledCode, {}).then(data => log(data))
 }
 
 fs.watch(path.dirname(inpPath), "binary", (x, y) => {
+    log(path.join(x, y))
     compile();
 })
 

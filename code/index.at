@@ -1,3 +1,4 @@
+@add http
 @imp outcomment.at
 
 int requestIndex = 0;

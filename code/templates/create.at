@@ -8,5 +8,5 @@ string HTML = "<b>Hallo Welt</b>";
 
 //output the string
 writeFile("in.html", txt);
-system("start in.html");
+//system("start in.html");
 print(txt);

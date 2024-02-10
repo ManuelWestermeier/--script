@@ -1,0 +1,9 @@
+System::String * target= "http://www.microsoft.com";
+System::String * target = "ftp://ftp.microsoft.com";
+System::String * target = "C:\\Program Files\\Microsoft Visual Studio\\INSTALL.HTM";
+
+System::Diagnostics::Process::Start(target);
+
+for (int i = 0; i < argc; ++i) {
+    print(argv[i]);
+}

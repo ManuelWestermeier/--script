@@ -90,16 +90,12 @@ function parseFile(pathname = "") {
             else if (fn == "@foreach") {
                 out += `for (auto ${parsedParts[1]} : ${parsedParts[3]}) {`
             }
-            //destructure constant arrays
-            else if (fn == "@const-destr") {
-                for (let index = 0; index < parsedParts.length - 5; index++) {
-                    out += `const ${parsedParts[3]} ${parsedParts[index + 5]} = ${parsedParts[1]}.at(${index});\n`
-                }
-            }
             //destructure arrays
             else if (fn == "@destr") {
                 for (let index = 0; index < parsedParts.length - 5; index++) {
-                    out += `${parsedParts[3]} ${parsedParts[index + 5]} = ${parsedParts[1]}.at(${index});\n`
+                    out += `${parsedParts[3]} ${parsedParts[index + 5]};
+                    if(${parsedParts[1]}.size() > ${index + 1})
+                    ${parsedParts[index + 5]} = ${parsedParts[1]}.at(${index});\n`
                 }
             }
             //create a dictionary

@@ -119,7 +119,7 @@ function parseFile(pathname = "") {
             else if (fn == "@templ") {
                 const impPath = path.join(dir, parsedParts[3].replace("\r", ""));
                 if (impPath == pathname) return;
-                if (!fs.existsSync(impPath)) throw new Error("path not exists");
+                if (!fs.existsSync(impPath)) log(`error @templ -> ${parsedParts[1].toLowerCase()} <- file dont exists : on line : ${pathname}:${lineIndex + 1}`);;
                 const template = createTemplate(impPath, parsedParts);
                 out += template;
             }

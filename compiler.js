@@ -94,7 +94,7 @@ function parseFile(pathname = "") {
             else if (fn == "@destr") {
                 for (let index = 0; index < parsedParts.length - 5; index++) {
                     out += `${parsedParts[3]} ${parsedParts[index + 5]};
-                    if(${parsedParts[1]}.size() > ${index + 1})
+                    if(${parsedParts[1]}.size() > ${index})
                     ${parsedParts[index + 5]} = ${parsedParts[1]}.at(${index});\n`
                 }
             }

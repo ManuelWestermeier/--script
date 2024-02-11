@@ -1,14 +1,12 @@
-const { log } = require("console")
+const { log } = require("console");
 const fs = require("fs")
 const path = require("path")
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
-const cppCompilerPath = "C:/msys64/ucrt64/bin/g++.exe"
 const inpPath = "code/index.at"
 const outPath = "C:\\Users\\Manuel Westermeier\\source\\repos\\cpp-server-script\\cpp-server-script.cpp"
 //const outPath = "out/index.cpp"
-const onProgrammCompiledCode = ``;
 
 compile()
 //start compiling
@@ -16,19 +14,25 @@ function compile() {
     fs.writeFileSync(outPath,
         fs.readFileSync("src/index.cpp", "utf-8") + parseFile(inpPath)
         , "utf-8")
-    //exec(onProgrammCompiledCode, {}).then(data => log(data))
+    //run file on compiled
+    exec("onCompiled.bat", {}).then(data =>
+        log(data.stdout + data.stderr)
+    )
+    log("compiled")
 }
 
-fs.watch(path.dirname(inpPath), "binary", (x, y) => {
+fs.watch(inpPath, "binary", (x, y) => {
     log(path.join(x, y))
     compile();
 })
+
+setInterval(() => compile(), 3000)
 
 function parseFile(pathname = "") {
 
     const dir = path.dirname(pathname)
 
-    return fs.readFileSync(pathname, "utf-8").split("\n").map(line => {
+    return fs.readFileSync(pathname, "utf-8").split("\n").map((line, lineIndex) => {
         //check if the nostrinp part includes @
         if (!line.split("\"").filter((p, i) => i % 2 == 0).join(" ").includes("@")) return line
         //create the out string
@@ -60,6 +64,7 @@ function parseFile(pathname = "") {
                 if (impPath == pathname) return;
                 if (fs.existsSync(impPath))
                     out += parseFile(impPath);
+                else log(`error @imp -> ${impPath} <- file dont exists : on line : ${pathname}:${lineIndex + 1}`);
             }
             //add dependencies
             else if (fn == "@add") {
@@ -67,6 +72,15 @@ function parseFile(pathname = "") {
                 if (dependencies == "http") {
                     out += `\n${fs.readFileSync("src/cpp-httplib/httplib.h")}\n`;
                 }
+                else log(`error @add -> ${parsedParts[1].toLowerCase()} <- variable dont exists : on line : ${pathname}:${lineIndex + 1}`);
+            }
+            //create array
+            else if (fn == "@array") {
+                out += `vector<${parsedParts[3]}> ${parsedParts[1]};`
+            }
+            //create constant array
+            else if (fn == "@const-array") {
+                out += `const vector<${parsedParts[3]}> ${parsedParts[1]};`
             }
             //create array
             else if (fn == "@array") {
@@ -75,6 +89,12 @@ function parseFile(pathname = "") {
             //loop for each
             else if (fn == "@foreach") {
                 out += `for (auto ${parsedParts[1]} : ${parsedParts[3]}) {`
+            }
+            //destructure constant arrays
+            else if (fn == "@const-destr") {
+                for (let index = 0; index < parsedParts.length - 5; index++) {
+                    out += `const ${parsedParts[3]} ${parsedParts[index + 5]} = ${parsedParts[1]}.at(${index});\n`
+                }
             }
             //destructure arrays
             else if (fn == "@destr") {
@@ -111,8 +131,11 @@ function parseFile(pathname = "") {
             else if (fn == "@private") {
                 out += "private:"
             }
+            //comment
+            else if (fn[0] == "/" && ((fn[1] == "/")) || (fn[1] == "*")) out += parsedParts.join(" ");
             //return default
             else {
+                log(`error identifyier -> ${fn} <- dont exists : on line : ${pathname}:${lineIndex + 1}`);
                 out += parsedParts.join(" ");
             }
         })
@@ -122,6 +145,21 @@ function parseFile(pathname = "") {
 
 }
 
+function createTemplate(pathname, parsedParts) {
+    const data = fs.readFileSync(pathname, "utf-8");
+    var isVar = true;
+    return `string ${parsedParts[1]} = ${data.split("##").map((part, i) => {
+        isVar = !isVar;
+        if (isVar) {
+            return part == "hash" ? '"#"' : part
+        }
+        else {
+            return `"${part.split('"').join('\\"').split("\n").join('\\n').split("\r").join('')}"`
+        }
+    }).join(" + ")};`
+}
+
+/*
 function createTemplate(pathname, parsedParts) {
     const data = fs.readFileSync(pathname, "utf-8");
     var isVar = false;
@@ -138,3 +176,4 @@ function createTemplate(pathname, parsedParts) {
     })
     return template;
 }
+*/

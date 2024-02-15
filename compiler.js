@@ -55,7 +55,7 @@ function parseFile(pathname = "") {
             //start the logic
             //on init
             if (fn == "@init") {
-                out += "int main(int argc, char *argv[]) {"
+                out += `int main(int argc, char *argv[]) { __filename = argv[0]; `
             }
             //import form file
             else if (fn == "@imp") {
@@ -110,6 +110,11 @@ function parseFile(pathname = "") {
             else if (fn == "@fn") {
                 const [name, type] = parsedParts[1].split("#")
                 out += `${type || "void"} ${name} ${parsedParts.slice(2, parsedParts.length).join(" ")}`
+            }
+            //create lamda function 
+            else if (fn == "@lfn") {
+                var args = parsedParts.slice(2, parsedParts.length).join(" ").replace("{", "").replace("}", "")
+                out += `auto ${parsedParts[1]} = [&] ${args || "()"} {`
             }
             //create template strings
             else if (fn == "@templ") {

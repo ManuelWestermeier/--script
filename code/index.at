@@ -1,5 +1,6 @@
 @add http
 @imp outcomment.at
+@module test
 
 int requestIndex = 0;
 string lastPost = "Hello World";
@@ -14,6 +15,7 @@ string lastPost = "Hello World";
 }
 
 @init {
+    test();
     //get the arguments
     @imp args.at
     //call a function

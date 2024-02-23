@@ -55,7 +55,7 @@ function parseFile(pathname = "") {
             //start the logic
             //on init
             if (fn == "@init") {
-                out += `int main(int argc, char *argv[]) { __filename = argv[0]; `
+                out += "int main(int argc, char *argv[]) {"
             }
             //import form file
             else if (fn == "@imp") {
@@ -74,6 +74,10 @@ function parseFile(pathname = "") {
                 }
                 else log(`error @add -> ${parsedParts[1].toLowerCase()} <- variable dont exists : on line : ${pathname}:${lineIndex + 1}`);
             }
+            //add dependencies
+            else if (fn == "@module") {
+                out += parseFile(`modules/${parsedParts.slice(1, parsedParts.length).join(" ")}/index.at`)
+            }
             //create array
             else if (fn == "@array") {
                 out += `vector<${parsedParts[3]}> ${parsedParts[1]};`
@@ -90,12 +94,16 @@ function parseFile(pathname = "") {
             else if (fn == "@foreach") {
                 out += `for (auto ${parsedParts[1]} : ${parsedParts[3]}) {`
             }
+            //destructure constant arrays
+            else if (fn == "@const-destr") {
+                for (let index = 0; index < parsedParts.length - 5; index++) {
+                    out += `const ${parsedParts[3]} ${parsedParts[index + 5]} = ${parsedParts[1]}.at(${index});\n`
+                }
+            }
             //destructure arrays
             else if (fn == "@destr") {
                 for (let index = 0; index < parsedParts.length - 5; index++) {
-                    out += `${parsedParts[3]} ${parsedParts[index + 5]};
-                    if(${parsedParts[1]}.size() > ${index})
-                    ${parsedParts[index + 5]} = ${parsedParts[1]}.at(${index});\n`
+                    out += `${parsedParts[3]} ${parsedParts[index + 5]} = ${parsedParts[1]}.at(${index});\n`
                 }
             }
             //create a dictionary
@@ -111,16 +119,11 @@ function parseFile(pathname = "") {
                 const [name, type] = parsedParts[1].split("#")
                 out += `${type || "void"} ${name} ${parsedParts.slice(2, parsedParts.length).join(" ")}`
             }
-            //create lamda function 
-            else if (fn == "@lfn") {
-                var args = parsedParts.slice(2, parsedParts.length).join(" ").replace("{", "").replace("}", "")
-                out += `auto ${parsedParts[1]} = [&] ${args || "()"} {`
-            }
             //create template strings
             else if (fn == "@templ") {
                 const impPath = path.join(dir, parsedParts[3].replace("\r", ""));
                 if (impPath == pathname) return;
-                if (!fs.existsSync(impPath)) return log(`error @templ -> ${parsedParts[1].toLowerCase()} <- file dont exists : on line : ${pathname}:${lineIndex + 1}`);;
+                if (!fs.existsSync(impPath)) throw new Error("path not exists");
                 const template = createTemplate(impPath, parsedParts);
                 out += template;
             }
@@ -160,23 +163,4 @@ function createTemplate(pathname, parsedParts) {
     }).join(" + ")};`
 }
 
-/*
-function createTemplate(pathname, parsedParts) {
-    const data = fs.readFileSync(pathname, "utf-8");
-    var isVar = false;
-    var template = `string   ${parsedParts[1]};\n`;
-    data.split("##").map((part, i) => {
-        if (isVar) {
-            template += `${parsedParts[1]} += ${part == "hash" ? '"#"' : part};\n`
-        }
-        else {
-            const noLines = part.split('"').join('\\"').split("\n").join('\\n').split("\r").join('')
-            template += `${parsedParts[1]} += "${noLines}";\n`
-        }
-        isVar = !isVar;
-    })
-    return template;
-}
-*/
-
-process.on("uncaughtException", err => log(err))
+process.on("uncaughtException", log)

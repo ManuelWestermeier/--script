@@ -1,3 +1,0 @@
-//split string
-//split(string, splitter);
-text = split("Hello World it's the first programm written in @-script?", " ");

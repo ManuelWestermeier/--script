@@ -1,52 +1,28 @@
 @add http
-@imp outcomment.at
-@module test
-
-int requestIndex = 0;
-string lastPost = "Hello World";
-
-@fn returnSomeString#string () {
-    return "\nSome String\n\n";
-}
-
-@fn doSomethingx(int i) {
-    print("Hallo Welt " + sf(i));
-    print(returnSomeString());
-}
 
 @init {
-    test();
-    //get the arguments
-    @imp args.at
-    //call a function
-    doSomethingx(10);
-    //---arrays---
-    //test array create
-    @imp array/create.at
-    //split a string
-    @imp array/split.at
-    //loop foreach
-    @imp array/foreach.at
-    //join array
-    @imp array/join.at
-    //destruct array
-    @imp array/destruct.at
-    //loop
-    @imp loop.at
-    //---maps---
-    //create
-    @imp map/create.at
-    //get set and delete
-    @imp map/set_get_delete.at
-    //---filesystem---
-    @imp fs.at
-    //---string tamplate----
-    @imp templates/create.at
-    //---create-http-server---
-    @imp server/index.at
-    //pause the system
-    system("pause");
-}
 
-//---class---
-@imp class.at
+    if (argc < 5) {
+        cerr << "wrong usage : PORT PATHNAME RESPONSETYPE RESPONSEPARTS" << endl;
+        return 1;
+    }
+
+    int portFromUser = atoi(argv[1]);
+    string pathNameFromUser = argv[2];
+    string responseTypeFromUser = argv[3];
+    string responseStringFromUser = argv[4];
+
+    for(int i = 5; i < argc; i++) {
+        responseStringFromUser += argv[i];
+    }
+
+    // HTTP Server
+    httplib::Server svr;
+    
+    svr.Get(pathNameFromUser, [&responseStringFromUser, &responseTypeFromUser](const httplib::Request &, httplib::Response &res) {
+        res.set_content(responseStringFromUser, responseTypeFromUser);
+    });
+
+    svr.listen("0.0.0.0", portFromUser);
+
+}

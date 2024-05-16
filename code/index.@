@@ -1,7 +1,0 @@
-@add src/start.@
-
-@fn main#int {
-    start(10);
-    system("pause");
-    @back 0
-}

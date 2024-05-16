@@ -1,6 +1,0 @@
-//set
-global["xyz"] = "\nHallo Welt from Map\n";
-//get
-print(global["xyz"]);
-//delete
-global.erase("xyz");

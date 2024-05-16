@@ -1,9 +1,0 @@
-@loop 10 {
-    //sf = stringify
-	print("int " + sf(index) +"\n");
-}
-
-@loop 5 # i {
-    //sf = stringify
-	print("int " + sf(i) +"\n");
-}

@@ -1,4 +1,0 @@
-//name : string
-@array text : string
-//name : string
-@const-array const_text : string

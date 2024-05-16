@@ -1,5 +1,0 @@
-//loop for items in array
-//itemname : array-name
-@foreach &word : text {
-    print(word + ",");
-}

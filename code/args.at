@@ -1,6 +1,0 @@
-for (int i = 0; i < argc; ++i) {
-    print("arg" + sf(i + 1) + " : " + argv[i]);
-}
-
-if(argc > 0)
-    system(("start msedge " + (string)argv[1]).c_str());

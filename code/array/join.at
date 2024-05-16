@@ -1,5 +1,0 @@
-//join array
-print("\n");
-//join(array:array-string, splitter:string);
-print(join(text,"|"));
-print("\n");

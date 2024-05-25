@@ -5,7 +5,7 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
 const inpPath = "code/index.at"
-const outPath = "C:\\Users\\Manuel Westermeier\\source\\repos\\cpp-server-script\\cpp-server-script.cpp"
+const outPath = "out.cpp"
 //const outPath = "out/index.cpp"
 
 compile()
